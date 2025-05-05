@@ -1,0 +1,165 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark">
+                    <h4 class="mb-0"><i class="fas fa-cog me-2"></i>API Settings</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{{ url_for('settings') }}">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>API Key Requirements:</strong> To use the grid bot, you need to create API keys on Binance with the following permissions:
+                            <ul class="mb-0 mt-2">
+                                <li>Enable Futures</li>
+                                <li>Enable Reading</li>
+                                <li>Enable Futures Trading</li>
+                                <li>Restrict access to trusted IPs (recommended)</li>
+                            </ul>
+                        </div>
+                        
+                        {% if server_ip %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-shield-alt me-2"></i>
+                            <strong>Whitelist This Server's IP:</strong> For security, you should restrict your API keys to only work from this server's IP address:
+                            <div class="mt-2 d-flex align-items-center">
+                                <code class="bg-dark p-2 rounded">{{ server_ip }}</code>
+                                <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyToClipboard('{{ server_ip }}')">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mb-3">
+                            <label for="api_key" class="form-label">API Key</label>
+                            <input type="text" class="form-control" id="api_key" name="api_key" value="{{ current_user.api_key or '' }}" required>
+                            <small class="form-text text-muted">Your Binance API Key</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="api_secret" class="form-label">API Secret</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="api_secret" name="api_secret" value="{{ current_user.api_secret or '' }}" required>
+                                <button class="btn btn-outline-secondary" type="button" id="toggleSecret">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <small class="form-text text-muted">Your Binance API Secret</small>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="confirmCheck" required>
+                            <label class="form-check-label" for="confirmCheck">
+                                I understand that these API keys will be used to execute trades on my behalf
+                            </label>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="skip_verification" name="skip_verification">
+                            <label class="form-check-label" for="skip_verification">
+                                Skip API verification (use this if you're getting connection errors)
+                            </label>
+                            <small class="d-block text-muted mt-1">
+                                <i class="fas fa-info-circle me-1"></i>
+                                If Binance is not accessible from our server location, check this option to save your keys without verification.
+                                You'll need to verify they work when you start a grid bot.
+                            </small>
+                        </div>
+                        
+                        <div class="alert alert-warning mt-4 mb-4">
+                            <h5><i class="fas fa-exclamation-triangle me-2"></i>Binance API Geographic Restrictions</h5>
+                            <p>If you're experiencing API access restrictions due to geographic limitations, you can:</p>
+                            <ol class="mb-0">
+                                <li>Use a VPN to access Binance from a supported region</li>
+                                <li>Deploy this grid bot on a server in a region where Binance API is accessible</li>
+                                <li>Check Binance documentation for region-specific API endpoints that may work in your area</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Save API Settings</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Security Notice -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-dark">
+                    <h4 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Security Information</h4>
+                </div>
+                <div class="card-body">
+                    <h5>How We Handle Your API Keys</h5>
+                    <ul>
+                        <li>Your API keys are stored securely and encrypted in our database</li>
+                        <li>Keys are only used to execute the grid trading strategy you configure</li>
+                        <li>We recommend using API keys with IP restrictions for added security</li>
+                        <li>Never enable withdrawals permissions for API keys used with this bot</li>
+                    </ul>
+                    
+                    <h5>Best Practices</h5>
+                    <ul>
+                        <li>Use a unique API key for this grid bot</li>
+                        <li>Regularly rotate your API keys for security</li>
+                        <li>Monitor your account activities on Binance</li>
+                        <li>Start with small trading amounts until you're comfortable with the bot's operation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle visibility of API secret
+    const toggleSecretBtn = document.getElementById('toggleSecret');
+    const apiSecretInput = document.getElementById('api_secret');
+    
+    toggleSecretBtn.addEventListener('click', function() {
+        const type = apiSecretInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        apiSecretInput.setAttribute('type', type);
+        
+        // Toggle eye icon
+        const eyeIcon = this.querySelector('i');
+        eyeIcon.classList.toggle('fa-eye');
+        eyeIcon.classList.toggle('fa-eye-slash');
+    });
+});
+
+// Function to copy server IP to clipboard
+function copyToClipboard(text) {
+    // Create temporary input element
+    const tempInput = document.createElement('input');
+    tempInput.value = text;
+    document.body.appendChild(tempInput);
+    
+    // Select and copy the text
+    tempInput.select();
+    document.execCommand('copy');
+    
+    // Remove temporary element
+    document.body.removeChild(tempInput);
+    
+    // Show a brief tooltip or notification
+    const clipboardBtn = event.target.closest('button');
+    const originalHTML = clipboardBtn.innerHTML;
+    
+    clipboardBtn.innerHTML = '<i class="fas fa-check"></i>';
+    clipboardBtn.classList.add('btn-success');
+    clipboardBtn.classList.remove('btn-outline-secondary');
+    
+    setTimeout(() => {
+        clipboardBtn.innerHTML = originalHTML;
+        clipboardBtn.classList.remove('btn-success');
+        clipboardBtn.classList.add('btn-outline-secondary');
+    }, 1500);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,104 @@
+/* Custom CSS for Binance Futures Grid Bot */
+
+/* Card styling */
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Status badges */
+.badge.bg-success {
+    background-color: #2ecc71 !important;
+}
+
+.badge.bg-danger {
+    background-color: #e74c3c !important;
+}
+
+.badge.bg-warning {
+    background-color: #f39c12 !important;
+}
+
+.badge.bg-secondary {
+    background-color: #95a5a6 !important;
+}
+
+/* Grid chart container */
+.chart-container {
+    position: relative;
+    height: 150px;
+}
+
+/* Table styling for trade history */
+.table-sm td, .table-sm th {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Profit/Loss coloring */
+.profit-positive {
+    color: #2ecc71;
+}
+
+.profit-negative {
+    color: #e74c3c;
+}
+
+/* Login/Register form */
+.auth-card {
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+.auth-tabs .nav-link {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.auth-tabs .nav-link.active {
+    color: white;
+    background-color: transparent;
+    border-bottom: 2px solid #3498db;
+}
+
+/* Custom switch for toggle */
+.form-switch .form-check-input {
+    width: 3em;
+}
+
+.form-switch .form-check-input:checked {
+    background-color: #2ecc71;
+    border-color: #2ecc71;
+}
+
+/* Animated spinner for loading states */
+.spinner {
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 0.2rem solid rgba(255, 255, 255, 0.2);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Help text and tooltips */
+.form-text {
+    font-size: 0.75rem;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .card-header h5 {
+        font-size: 1rem;
+    }
+    
+    .col-sm-6 {
+        margin-bottom: 1rem;
+    }
+}
